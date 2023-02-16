@@ -1,14 +1,18 @@
 package next.controller;
 
-import core.db.DataBase;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class HomeController implements Controller {
+public class ForwardController implements Controller{
+
+    private String forwardUrl;
+
+    public ForwardController(String forwardUrl) {
+        this.forwardUrl = forwardUrl;
+    }
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        req.setAttribute("users", DataBase.findAll());
-        return "/index.jsp";
+        return this.forwardUrl;
     }
 }
