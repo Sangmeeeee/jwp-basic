@@ -33,3 +33,24 @@ function onSuccess(json, status){
 function onError(e){
 
 }
+
+$(".qna-comment").on("click", ".form-delete", deleteAnswer);
+
+function deleteAnswer(e){
+  e.preventDefault();
+  var queryString = $(this).closest('form[class=form-delete]').serialize()
+  console.log(queryString)
+
+  $.ajax({
+    type: 'post',
+    url: '/api/qna/deleteAnswer',
+    data: queryString,
+    dataType: 'json',
+    error: onError,
+    success: onDeleteSuccess
+  })
+}
+
+function onDeleteSuccess(json, status){
+  var target = $(this).closest('article').remove()
+}
