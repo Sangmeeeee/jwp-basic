@@ -10,7 +10,12 @@
 * DispatcherServlet 내부의 init 메소드를 실행하여 RequestMapping 객체를 생성하고 내부 url에 따른 Controller들을 생성하고 Mapping 해준다.
 
 #### 2. Tomcat 서버를 시작한 후 http://localhost:8080으로 접근시 호출 순서 및 흐름을 설명하라.
-* 
+* 톰캣은 사용자 요청을 기다리고 있다가 사용자 요청이 오면 WebServlet에 등록된 url path에 따라 servlet을 호출하여 service 메소드를 실행한다.
+  * 해당 프로젝트에는 DispatcherServlet의 urlMapping이 / 로 되어있기 때문에 모든 요청을 다 받는다.
+  * 하지만 요청을 DispacherServlet이 처리하기 전에 ResourceFilter로 인해 js, css, img 등 정적인 데이터들은 따로 처리된다.
+* /에 mapping 되어 있는 컨트롤러는 HomeController이기 때문에 HomeController의 execute 메소드를 통해 ModelAndView를 리턴 받는다.
+  * 해당 ModelAndView의 Model에는 questions라는 key로 QuestionDao 클래스에서 리턴 받은 모든 질문들이 담겨 있다.
+  * View는 jspView이기 때문에 model의 모든 값들을 attribute로 설정해주고 forward 메소드를 통해 해당 view를 사용자에게 응답해준다.
 
 #### 7. next.web.qna package의 ShowController는 멀티 쓰레드 상황에서 문제가 발생하는 이유에 대해 설명하라.
 * 
