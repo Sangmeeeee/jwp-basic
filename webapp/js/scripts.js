@@ -23,6 +23,27 @@ function onSuccess(json, status){
   $(".qna-comment-slipp-articles").prepend(template);
 }
 
+$(".article button[class=link-delete-article]").click(deleteAnswer);
+
+function deleteAnswer(e){
+  e.preventDefault();
+
+  var btn = $(this);
+  var queryString = $(this).closest('form').serialize();
+
+  $.ajax({
+    type: 'post',
+    url: '/api/qna/deleteAnswer',
+    data: queryString,
+    dataType: 'json',
+    error: onError,
+    success: function (json, status){
+        if(json.result.status)
+          btn.closest('article').remove();
+    }
+  })
+}
+
 function onError(xhr, status) {
   alert("error");
 }
