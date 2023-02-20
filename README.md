@@ -18,4 +18,9 @@
   * View는 jspView이기 때문에 model의 모든 값들을 attribute로 설정해주고 forward 메소드를 통해 해당 view를 사용자에게 응답해준다.
 
 #### 7. next.web.qna package의 ShowController는 멀티 쓰레드 상황에서 문제가 발생하는 이유에 대해 설명하라.
-* 
+* ShowController 내부에서 클래스 멤버로 선언되어있는 Question과 List<Answer> 멤버에서 문제가 발생한다.
+* ShowContoller의 인스턴스는 한번만 생성되어 메모리(JVM 힙)를 차지하고 있다.
+  * 이런 상황에서 클래스 멤버인 Question과 List<Answer>은 사용자 마다 다른 상태값을 가져야한다.
+* 멀티 스레드 상황에서 question = questionDao.findById(questionId)는 한번에 여러번 실행 될 수 있다.
+  * 일반적인 메소드 내부에서는 힙 영역에서 인스턴스를 계속해서 생성하고 참조하지만 Question과 List<Answer>은 클래스 멤버이기 때문에 최초 인스턴스가 생성되면 사라지지 않는 ShowController의 특성상 메모리의 초기화가 일어나지 않는다.
+  * 따라서 위와같은 메소드가 한번에 여러번 일어나면 다음 question을 참조할 때 마지막으로 호출된 questionDao.findById(questionId)의 값이 응답될 수 있다.
