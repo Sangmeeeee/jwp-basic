@@ -23,7 +23,7 @@ function onSuccess(json, status){
   $(".qna-comment-slipp-articles").prepend(template);
 }
 
-$(".article button[class=link-delete-article]").click(deleteAnswer);
+$(".qna-comment").on("click", ".form-delete", deleteAnswer);
 
 function deleteAnswer(e){
   e.preventDefault();

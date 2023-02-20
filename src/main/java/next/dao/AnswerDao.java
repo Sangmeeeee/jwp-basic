@@ -79,4 +79,9 @@ public class AnswerDao {
         String sql = "DELETE FROM ANSWERS WHERE answerId = ?";
         jdbcTemplate.update(sql, answerId);
     }
+
+    public void deleteAllByQuestionId(long questionId){
+        String sql = "DELETE FROM ANSWERS WHERE questionId = ?";
+        jdbcTemplate.update(sql, questionId);
+    }
 }
