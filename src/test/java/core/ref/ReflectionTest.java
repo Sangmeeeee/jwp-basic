@@ -7,10 +7,7 @@ import org.slf4j.LoggerFactory;
 import next.model.Question;
 import next.model.User;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
 
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
@@ -36,9 +33,12 @@ public class ReflectionTest {
     }
     
     @Test
-    public void newInstanceWithConstructorArgs() {
+    public void newInstanceWithConstructorArgs() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<User> clazz = User.class;
         logger.debug(clazz.getName());
+        for(Constructor<?> constructor : clazz.getDeclaredConstructors()){
+            User user = (User) constructor.newInstance("userId", "password", "name", "email");
+        }
     }
     
     @Test
