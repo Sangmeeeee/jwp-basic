@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import core.nmvc.AnnotationHandlerMapping;
+import core.nmvc.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,12 +20,18 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private LegacyHandlerMapping rm;
+    private List<HandlerMapping> mappings = new ArrayList<>();
 
     @Override
     public void init() throws ServletException {
-        rm = new LegacyHandlerMapping();
-        rm.initMapping();
+        LegacyHandlerMapping lhm = new LegacyHandlerMapping();
+        lhm.initMapping();
+
+        AnnotationHandlerMapping ahm = new AnnotationHandlerMapping("next.controller");
+        ahm.initialize();
+
+        mappings.add(lhm);
+        mappings.add(ahm);
     }
 
     @Override
@@ -31,15 +39,29 @@ public class DispatcherServlet extends HttpServlet {
         String requestUri = req.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
-        Controller controller = rm.findController(req.getRequestURI());
-        ModelAndView mav;
         try {
-            mav = controller.execute(req, resp);
+            ModelAndView mav = execute(getHandler(req), req, resp);
             View view = mav.getView();
             view.render(mav.getModel(), req, resp);
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object getHandler(HttpServletRequest request){
+        for(HandlerMapping handlerMapping : mappings){
+            Object handler = handlerMapping.getHandler(request);
+            if(handler != null)
+                return handler;
+        }
+        return null;
+    }
+
+    private ModelAndView execute(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if(handler instanceof HandlerExecution)
+            return ((HandlerExecution) handler).handle(request, response);
+        else
+            return ((Controller) handler).execute(request, response);
     }
 }
