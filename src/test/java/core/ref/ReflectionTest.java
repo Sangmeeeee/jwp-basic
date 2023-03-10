@@ -42,8 +42,20 @@ public class ReflectionTest {
     }
     
     @Test
-    public void privateFieldAccess() {
+    public void privateFieldAccess() throws NoSuchFieldException, IllegalAccessException {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
+        Field nameField = clazz.getDeclaredField("name");
+        Field ageField = clazz.getDeclaredField("age");
+
+        nameField.setAccessible(true);
+        ageField.setAccessible(true);
+
+        Student student = new Student();
+        logger.debug("{}", student.getName());
+
+        nameField.set(student, "name");
+        ageField.setInt(student, 10);
+        logger.debug("{}", student.getName());
     }
 }
